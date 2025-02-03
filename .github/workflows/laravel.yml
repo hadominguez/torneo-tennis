@@ -18,7 +18,7 @@ jobs:
       mysql:
         image: mysql:5.7
         env:
-          MYSQL_ROOT_PASSWORD: root
+          MYSQL_ROOT_PASSWORD: ${{ secrets.DB_PASSWORD }}  # Usando el secreto
           MYSQL_DATABASE: torneo
         ports:
           - 3306:3306
@@ -49,11 +49,11 @@ jobs:
         sed -i 's/DB_PORT=3306/DB_PORT=3306/' .env
         sed -i 's/DB_DATABASE=homestead/DB_DATABASE=torneo/' .env
         sed -i 's/DB_USERNAME=root/DB_USERNAME=root/' .env
-        sed -i 's/DB_PASSWORD=/DB_PASSWORD=root/' .env
+        sed -i 's/DB_PASSWORD=/DB_PASSWORD=${{ secrets.DB_PASSWORD }}/' .env  # Usar el secreto aquí
 
     - name: Wait for MySQL to be ready
       run: |
-        while ! mysqladmin --host=localhost --user=root --password=root ping --silent; do
+        while ! mysqladmin --host=localhost --user=root --password=${{ secrets.DB_PASSWORD }} ping --silent; do
           sleep 1
         done
 
