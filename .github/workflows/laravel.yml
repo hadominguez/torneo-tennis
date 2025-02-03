@@ -20,6 +20,8 @@ jobs:
         env:
           MYSQL_ROOT_PASSWORD: ${{ secrets.DB_PASSWORD }}
           MYSQL_DATABASE: torneo
+          MYSQL_USER: laravel
+          MYSQL_PASSWORD: ${{ secrets.DB_PASSWORD }}
         ports:
           - 3306:3306
         options: >-
@@ -47,7 +49,7 @@ jobs:
         sed -i 's/DB_HOST=127.0.0.1/DB_HOST=127.0.0.1/' .env
         sed -i 's/DB_PORT=3306/DB_PORT=3306/' .env
         sed -i 's/DB_DATABASE=homestead/DB_DATABASE=torneo/' .env
-        sed -i 's/DB_USERNAME=root/DB_USERNAME=root/' .env
+        sed -i 's/DB_USERNAME=root/DB_USERNAME=laravel/' .env
         sed -i 's/DB_PASSWORD=/DB_PASSWORD=${{ secrets.DB_PASSWORD }}/' .env
 
     - name: Check MySQL container status
@@ -60,7 +62,7 @@ jobs:
       run: |
         export MYSQL_PWD=${{ secrets.DB_PASSWORD }}
         for i in {1..30}; do
-          if mysqladmin --host=127.0.0.1 --user=root ping --silent; then
+          if mysqladmin --host=127.0.0.1 --user=laravel ping --silent; then
             echo "MySQL is up!"
             exit 0
           fi
