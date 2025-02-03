@@ -26,7 +26,7 @@ jobs:
           --health-cmd="mysqladmin ping --silent"
           --health-interval=5s
           --health-timeout=5s
-          --health-retries=3
+          --health-retries=5
 
     steps:
     - name: Check out the repository
@@ -38,8 +38,7 @@ jobs:
         php-version: '8.1'
 
     - name: Install dependencies
-      run: |
-        composer install
+      run: composer install
 
     - name: Set up .env file from .env.example
       run: |
@@ -51,15 +50,21 @@ jobs:
         sed -i 's/DB_USERNAME=root/DB_USERNAME=root/' .env
         sed -i 's/DB_PASSWORD=/DB_PASSWORD=${{ secrets.DB_PASSWORD }}/' .env
 
+    - name: Check MySQL container status
+      run: docker ps | grep mysql || echo "MySQL container is not running"
+
+    - name: Show MySQL logs
+      run: docker logs $(docker ps -q --filter ancestor=mysql:latest) || echo "No MySQL logs found"
+
     - name: Wait for MySQL to be ready
       run: |
         export MYSQL_PWD=${{ secrets.DB_PASSWORD }}
-        for i in {1..30}; do  # 30 intentos (~30 segundos)
-          if mysqladmin --host=localhost --user=root ping --silent; then
+        for i in {1..30}; do
+          if mysqladmin --host=127.0.0.1 --user=root ping --silent; then
             echo "MySQL is up!"
             exit 0
           fi
-          echo "Waiting for MySQL..."
+          echo "Waiting for MySQL... attempt $i"
           sleep 2
         done
         echo "MySQL did not start in time."
