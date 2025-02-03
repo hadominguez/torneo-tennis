@@ -1,66 +1,95 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# Torneo de Tennis API
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+API REST para gestionar y simular torneos de tenis con eliminación directa.  
+Permite registrar jugadores, crear torneos y simular enfrentamientos hasta determinar un ganador.  
 
-## About Laravel
+## Características  
+- Simulación de torneos de eliminación directa.  
+- Categorías masculina y femenina con factores específicos de desempeño.  
+- Generación automática de enfrentamientos a partir de los jugadores.  
+- API RESTful con endpoints para gestionar torneos, partidos y jugadores.
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+## Requisitos  
+- PHP 8+  
+- Laravel 10+  
+- Composer  
+- MySQL  
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+## Instalación  
+1. Clonar el repositorio:  
+   ```sh
+   git clone https://github.com/hadominguez/torneo-tennis.git
+   cd torneo-tennis
+   ```
+2. Instalar dependencias:  
+   ```sh
+   composer install
+   ```
+3. Configurar variables de entorno:  
+   ```sh
+   cp .env.example .env
+   ```
+   Luego, editar `.env` con los datos de la base de datos.  
+4. Generar la clave de la aplicación:  
+   ```sh
+   php artisan key:generate
+   ```
+5. Ejecutar migraciones y sembrar datos de prueba:  
+   ```sh
+   php artisan migrate --seed
+   ```
+6. Iniciar el servidor de desarrollo:  
+   ```sh
+   php artisan serve
+   ```
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+## Endpoints principales  
 
-## Learning Laravel
+### **Torneos**  
+| Método  | Endpoint | Descripción |
+|---------|---------|-------------|
+| GET | `/tournaments` | Obtener todos los torneos |
+| POST | `/tournaments` | Crear un nuevo torneo |
+| GET | `/tournaments/{id}` | Obtener un torneo por ID |
+| PUT | `/tournaments/{id}` | Actualizar un torneo |
+| DELETE | `/tournaments/{id}` | Eliminar un torneo |
+| GET | `/tournaments/{id}/start` | Iniciar un torneo |
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+### **Partidos**  
+| Método  | Endpoint | Descripción |
+|---------|---------|-------------|
+| GET | `/matches` | Obtener todos los partidos |
+| POST | `/matches` | Crear un nuevo partido |
+| GET | `/matches/{id}` | Obtener un partido por ID |
+| PUT | `/matches/{id}` | Actualizar un partido |
+| DELETE | `/matches/{id}` | Eliminar un partido |
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
+### **Jugadores**  
+| Método  | Endpoint | Descripción |
+|---------|---------|-------------|
+| GET | `/players` | Obtener todos los jugadores |
+| POST | `/players` | Crear un nuevo jugador |
+| GET | `/players/{id}` | Obtener un jugador por ID |
+| PUT | `/players/{id}` | Actualizar un jugador |
+| DELETE | `/players/{id}` | Eliminar un jugador |
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+## Reglas del Torneo  
+- Formato de **eliminación directa** (el perdedor queda eliminado).  
+- Solo se permite una cantidad de jugadores que sea **potencia de 2**.  
+- Categorías:  
+  - **Masculino**: Influenciado por fuerza y velocidad.  
+  - **Femenino**: Influenciado por tiempo de reacción.  
+- Factores aleatorios pueden influir en el resultado de un partido.  
+- No existen los empates.  
 
-## Laravel Sponsors
+## Ejemplo de Uso  
+1. Registrar jugadores.  
+2. Crear un torneo y asignar jugadores.  
+3. Iniciar el torneo (`/tournaments/{id}/start`).  
+4. Consultar el ganador al finalizar.  
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
-
-### Premium Partners
-
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[WebReinvent](https://webreinvent.com/)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel/)**
-- **[Cyber-Duck](https://cyber-duck.co.uk)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Jump24](https://jump24.co.uk)**
-- **[Redberry](https://redberry.international/laravel/)**
-- **[Active Logic](https://activelogic.com)**
-- **[byte5](https://byte5.de)**
-- **[OP.GG](https://op.gg)**
-
-## Contributing
-
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
-
-## Code of Conduct
-
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
-
-## Security Vulnerabilities
-
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
-
-## License
-
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+## Testing  
+Para ejecutar los tests unitarios:  
+```sh
+php artisan test
+```
