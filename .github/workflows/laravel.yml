@@ -31,6 +31,15 @@ jobs:
           --health-retries=5
 
     steps:
+    - name: Debug secrets
+      run: |
+        if [[ -z "${{ secrets.DB_PASSWORD }}" ]]; then
+          echo "DB_PASSWORD is empty!"
+          exit 1
+        else
+          echo "DB_PASSWORD is set."
+        fi
+
     - name: Check out the repository
       uses: actions/checkout@v3
 
@@ -54,23 +63,6 @@ jobs:
 
     - name: Check MySQL container status
       run: docker ps | grep mysql || echo "MySQL container is not running"
-
-    - name: Show MySQL logs
-      run: docker logs $(docker ps -q --filter ancestor=mysql:latest) || echo "No MySQL logs found"
-
-    - name: Wait for MySQL to be ready
-      run: |
-        export MYSQL_PWD=${{ secrets.DB_PASSWORD }}
-        for i in {1..30}; do
-          if mysqladmin --host=127.0.0.1 --user=laravel ping --silent; then
-            echo "MySQL is up!"
-            exit 0
-          fi
-          echo "Waiting for MySQL... attempt $i"
-          sleep 2
-        done
-        echo "MySQL did not start in time."
-        exit 1
 
     - name: Run Laravel migrations
       run: php artisan migrate --env=testing
