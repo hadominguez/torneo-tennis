@@ -16,9 +16,9 @@ jobs:
 
     services:
       mysql:
-        image: mysql:5.7
+        image: mysql:latest
         env:
-          MYSQL_ROOT_PASSWORD: ${{ secrets.DB_PASSWORD }}  # Usando el secreto
+          MYSQL_ROOT_PASSWORD: ${{ secrets.DB_PASSWORD }}
           MYSQL_DATABASE: torneo
         ports:
           - 3306:3306
@@ -49,14 +49,21 @@ jobs:
         sed -i 's/DB_PORT=3306/DB_PORT=3306/' .env
         sed -i 's/DB_DATABASE=homestead/DB_DATABASE=torneo/' .env
         sed -i 's/DB_USERNAME=root/DB_USERNAME=root/' .env
-        sed -i 's/DB_PASSWORD=/DB_PASSWORD=${{ secrets.DB_PASSWORD }}/' .env  # Usar el secreto aquí
+        sed -i 's/DB_PASSWORD=/DB_PASSWORD=${{ secrets.DB_PASSWORD }}/' .env
 
     - name: Wait for MySQL to be ready
       run: |
         export MYSQL_PWD=${{ secrets.DB_PASSWORD }}
-        while ! mysqladmin --host=localhost --user=root ping --silent; do
-          sleep 1
+        for i in {1..30}; do  # 30 intentos (~30 segundos)
+          if mysqladmin --host=localhost --user=root ping --silent; then
+            echo "MySQL is up!"
+            exit 0
+          fi
+          echo "Waiting for MySQL..."
+          sleep 2
         done
+        echo "MySQL did not start in time."
+        exit 1
 
     - name: Run Laravel migrations
       run: php artisan migrate --env=testing
